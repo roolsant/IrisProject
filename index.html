@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Explorador Luma - GitHub Version</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: 'Fredoka', sans-serif;
+            background-color: #E0F7FA;
+            background-image: radial-gradient(#4DD0E1 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #333; 
+            text-align: center; 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            height: 100dvh; 
+            margin: 0; overflow: hidden;
+            padding-top: 10px;
+        }
+
+        #exit-btn {
+            position: absolute; top: 15px; right: 15px;
+            background-color: #FF5252; color: white; border: none;
+            width: 45px; height: 45px; border-radius: 50%;
+            font-weight: bold; font-size: 20px;
+            cursor: pointer; z-index: 1000; display: none;
+            box-shadow: 0 4px 0px #D32F2F;
+            align-items: center; justify-content: center;
+        }
+        #exit-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* SCANNER */
+        #scanner-frame {
+            position: relative;
+            width: 90vw; max-width: 380px;
+            aspect-ratio: 1 / 1; 
+            margin-top: 15px;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 8px solid #FFF;
+            box-shadow: 0 10px 25px rgba(0,188,212, 0.4);
+            background: #000;
+            display: none; 
+            z-index: 5;
+        }
+
+        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+        #scanner-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 6; pointer-events: none;
+        }
+
+        #crosshair {
+            position: absolute; top: 50%; left: 50%;
+            width: 80px; height: 80px;
+            transform: translate(-50%, -50%);
+            border: 4px dashed rgba(255,255,255,0.8);
+            border-radius: 20px;
+            z-index: 7;
+            animation: breathe 2s infinite;
+        }
+        @keyframes breathe { 0%, 100% { scale: 1; opacity: 0.8; } 50% { scale: 1.1; opacity: 1; } }
+
+        /* POP-UP DENTRO DO SCANNER */
+        #curiosity-card {
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 50; 
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        
+        #curiosity-card.active { opacity: 1; pointer-events: auto; }
+
+        #victory-title { 
+            font-size: 28px; color: #4CAF50; 
+            margin-bottom: 10px; font-weight: 800; 
+            text-transform: uppercase;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+        }
+
+        #curiosity-img-wrapper {
+            width: 90%; height: 60%;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+            border: 3px solid #eee;
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        #curiosity-image { 
+            width: 100%; height: 100%; object-fit: cover; 
+            display: block; 
+        }
+
+        /* EMOJI BACKUP (Caso esqueça de baixar a imagem) */
+        #backup-emoji {
+            font-size: 100px;
+            display: none; 
+            animation: bounce 1s infinite alternate;
+        }
+        @keyframes bounce { from { transform: scale(1); } to { transform: scale(1.2); } }
+
+        #target-bar {
+            margin-top: -25px; 
+            z-index: 20;
+            background: #fff;
+            padding: 10px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: inline-flex; align-items: center; gap: 10px;
+            transform: scale(0); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #target-text { font-size: 26px; font-weight: 800; text-transform: uppercase; color: #333;}
+        #target-dot { width: 28px; height: 28px; border-radius: 50%; border: 3px solid #eee; background: #ccc; }
+
+        #bottom-area {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            display: none; 
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-bottom: 20px;
+            pointer-events: none; 
+            z-index: 200; 
+        }
+
+        #character-row {
+            display: flex; align-items: flex-end; justify-content: center;
+            width: 100%; padding: 0 10px;
+            margin-bottom: 10px;
+        }
+
+        #luma-avatar {
+            width: 100px; height: 120px;
+            filter: drop-shadow(0 5px 15px rgba(0, 229, 255, 0.4));
+            animation: float 3s ease-in-out infinite;
+            flex-shrink: 0;
+            pointer-events: auto;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+        #speech-bubble {
+            background: #fff; 
+            border: 4px solid #00E5FF;
+            border-radius: 25px 25px 25px 5px;
+            padding: 15px 20px;
+            margin-left: 5px;
+            margin-bottom: 40px; 
+            font-size: 19px; 
+            line-height: 1.3; font-weight: 700; color: #333;
+            box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.2);
+            opacity: 0; transition: opacity 0.3s;
+            max-width: 65%;
+            white-space: pre-line; 
+            text-align: left;
+            pointer-events: auto;
+        }
+
+        #skip-btn {
+            background-color: #FF8A65; 
+            color: white; border: none;
+            padding: 15px 50px; 
+            font-size: 20px; 
+            border-radius: 50px; 
+            font-weight: 700; 
+            box-shadow: 0 6px 0px #E64A19;
+            cursor: pointer; 
+            pointer-events: auto;
+            margin: 0 auto; 
+            display: none; 
+            align-items: center; gap: 10px;
+            font-family: 'Fredoka', sans-serif;
+            transition: transform 0.1s;
+        }
+        #skip-btn:active { transform: translateY(6px); box-shadow: none; }
+
+        #start-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #4DD0E1;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000;
+        }
+        h1 { font-size: 48px; color: #fff; text-shadow: 4px 4px 0px rgba(0,0,0,0.1); margin-bottom: 30px; line-height: 1.1; }
+        
+        #player-name {
+            padding: 15px; font-size: 22px; border-radius: 20px; border: 4px solid #fff;
+            width: 80%; max-width: 300px; margin-bottom: 20px; text-align: center;
+            font-family: 'Fredoka', sans-serif; outline: none;
+            background: rgba(255,255,255,0.95); color: #333;
+        }
+        
+        #start-btn {
+            background: #FF4081; color: #fff; border: none; padding: 15px 60px;
+            font-size: 26px; border-radius: 50px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 8px 0px #C2185B; font-family: 'Fredoka', sans-serif;
+            transition: transform 0.1s;
+        }
+        #start-btn:active { transform: translateY(8px); box-shadow: none; }
+
+        canvas { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen">
+        <h1>🔍<br>Exploradora<br>Luma</h1>
+        <input type="text" id="player-name" placeholder="Seu nome aqui" autocomplete="off">
+        <button id="start-btn" onclick="startGame()">COMEÇAR</button>
+        <p style="color:white; margin-top:20px; opacity: 0.8; font-size: 14px;">📸 Preciso da sua câmera</p>
+    </div>
+
+    <button id="exit-btn" onclick="endGame()">X</button>
+
+    <div id="scanner-frame">
+        <div id="scanner-overlay"></div> 
+        <div id="crosshair"></div>
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="canvas"></canvas>
+
+        <div id="curiosity-card">
+            <div id="victory-title">MUITO BEM! 🎉</div>
+            <div id="curiosity-img-wrapper">
+                <img id="curiosity-image" src="" alt="Foto">
+                <div id="backup-emoji"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="target-bar">
+        <div id="target-text">...</div>
+        <div id="target-dot"></div>
+    </div>
+
+    <div id="bottom-area">
+        <div id="character-row">
+            <svg id="luma-avatar" viewBox="0 0 120 140">
+                <defs>
+                    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#e3f2fd;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="blueGlow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                </defs>
+                <g transform="translate(0, 10)"> 
+                     <ellipse cx="60" cy="35" rx="35" ry="28" fill="url(#bodyGrad)" stroke="#fff" stroke-width="2"/>
+                     <path d="M 35 35 Q 60 55 85 35 Q 85 20 60 20 Q 35 20 35 35 Z" fill="#1a1a1a" />
+                     <ellipse cx="50" cy="32" rx="7" ry="5" fill="#00E5FF" filter="url(#blueGlow)">
+                         <animate attributeName="ry" values="5;1;5" dur="4s" repeatCount="indefinite" />
+                     </ellipse>
+                     <ellipse cx="70" cy="32" rx="7" ry="5" fill="#00E5FF" filter="url(#blueGlow)">
+                         <animate attributeName="ry" values="5;1;5" dur="4s" repeatCount="indefinite" />
+                     </ellipse>
+                </g>
+                <ellipse cx="60" cy="95" rx="40" ry="30" fill="url(#bodyGrad)" stroke="#fff" stroke-width="2"/>
+            </svg>
+            
+            <div id="speech-bubble">Olá! Digite seu nome para começar.</div>
+        </div>
+
+        <button id="skip-btn" onclick="skipChallenge()">PULAR ⏩</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const targetText = document.getElementById('target-text');
+        const targetDot = document.getElementById('target-dot');
+        const targetBar = document.getElementById('target-bar');
+        const curiosityCard = document.getElementById('curiosity-card');
+        const curiosityImage = document.getElementById('curiosity-image');
+        const backupEmoji = document.getElementById('backup-emoji');
+        const victoryTitle = document.getElementById('victory-title');
+        const skipBtn = document.getElementById('skip-btn');
+        const exitBtn = document.getElementById('exit-btn');
+        const scannerFrame = document.getElementById('scanner-frame');
+        const bottomArea = document.getElementById('bottom-area');
+        const startScreen = document.getElementById('start-screen');
+        const bubbleText = document.getElementById('speech-bubble');
+        const nameInput = document.getElementById('player-name');
+
+        let childName = "";
+        let currentTarget = null; 
+        let gameStarted = false; 
+        let lockGame = false;
+        let holdCounter = 0;
+        let voice = null; 
+        let lastWrongColorName = ""; 
+        let wrongColorCounter = 0;
+        let errorCooldown = false;
+        let idleTimer15 = null; 
+        let idleTimer60 = null; 
+
+        // --- LISTA DE ARQUIVOS LOCAIS (Você deve baixar e salvar com esses nomes na pasta 'img') ---
+        const targets = {
+            "Vermelho": { 
+                hueMin: 340, hueMax: 20, satMin: 40, ligMin: 20, ligMax: 80, color: "#FF1744", 
+                facts: [
+                    {text: "o morango é vermelho e docinho.", img: "img/vermelho1.jpg", emoji: "🍓"},
+                    {text: "o caminhão de bombeiro ajuda as pessoas.", img: "img/vermelho2.jpg", emoji: "🚒"},
+                    {text: "a joaninha é vermelha com bolinhas.", img: "img/vermelho3.jpg", emoji: "🐞"}
+                ] 
+            },
+            "Laranja": { 
+                hueMin: 21, hueMax: 35, satMin: 40, ligMin: 30, ligMax: 85, color: "#FF6D00", 
+                facts: [
+                    {text: "a cenoura ajuda a gente a enxergar melhor.", img: "img/laranja1.jpg", emoji: "🥕"},
+                    {text: "o tigre tem listras para se esconder.", img: "img/laranja2.jpg", emoji: "🐅"},
+                    {text: "a laranja faz um suco muito gostoso.", img: "img/laranja3.jpg", emoji: "🍊"}
+                ] 
+            },
+            "Amarelo": { 
+                hueMin: 36, hueMax: 70, satMin: 30, ligMin: 20, ligMax: 95, color: "#FFD600", 
+                facts: [
+                    {text: "o Sol brilha forte lá no céu.", img: "img/amarelo1.jpg", emoji: "☀️"},
+                    {text: "o girassol gira para olhar o sol.", img: "img/amarelo2.jpg", emoji: "🌻"},
+                    {text: "a banana é a fruta favorita do macaco.", img: "img/amarelo3.jpg", emoji: "🍌"}
+                ] 
+            },
+            "Verde": { 
+                hueMin: 71, hueMax: 165, satMin: 25, ligMin: 15, ligMax: 90, color: "#00E676", 
+                facts: [
+                    {text: "as árvores limpam o ar que respiramos.", img: "img/verde1.jpg", emoji: "🌳"},
+                    {text: "o sapinho pula na lagoa.", img: "img/verde2.jpg", emoji: "🐸"},
+                    {text: "o brócolis deixa você forte.", img: "img/verde3.jpg", emoji: "🥦"}
+                ] 
+            },
+            "Azul": { 
+                hueMin: 176, hueMax: 260, satMin: 30, ligMin: 15, ligMax: 85, color: "#2979FF", 
+                facts: [
+                    {text: "o oceano é azul e muito grande.", img: "img/azul1.jpg", emoji: "🌊"},
+                    {text: "o céu fica azul em um dia de sol.", img: "img/azul2.jpg", emoji: "☁️"},
+                    {text: "a arara azul é muito bonita.", img: "img/azul3.jpg", emoji: "🦜"}
+                ] 
+            },
+            "Roxo": { 
+                hueMin: 256, hueMax: 295, satMin: 20, ligMin: 15, ligMax: 80, color: "#AA00FF", 
+                facts: [
+                    {text: "as uvas roxas são doces e fazem suco.", img: "img/roxo1.jpg", emoji: "🍇"},
+                    {text: "a lavanda é uma flor muito cheirosa.", img: "img/roxo2.jpg", emoji: "🌸"},
+                    {text: "existem borboletas com asas roxas.", img: "img/roxo3.jpg", emoji: "🦋"}
+                ] 
+            },
+            "Rosa": { 
+                hueMin: 296, hueMax: 339, satMin: 30, ligMin: 40, ligMax: 90, color: "#FF4081", 
+                facts: [
+                    {text: "o flamingo é rosa porque come camarão.", img: "img/rosa1.jpg", emoji: "🦩"},
+                    {text: "o boto cor-de-rosa vive no rio Amazonas.", img: "img/rosa2.jpg", emoji: "🐬"}, 
+                    {text: "muitas flores no jardim são cor de rosa.", img: "img/rosa3.jpg", emoji: "🌺"}
+                ] 
+            }
+        };
+
+        const challenges = Object.keys(targets);
+
+        if ('speechSynthesis' in window) {
+            loadVoices();
+            window.speechSynthesis.onvoiceschanged = function() { loadVoices(); };
+        }
+
+        function loadVoices() {
+            const voices = window.speechSynthesis.getVoices();
+            voice = voices.find(v => v.name.includes('Google Português') || v.name.includes('Microsoft Maria'));
+            if (!voice) voice = voices.find(v => v.lang.includes('pt-BR'));
+        }
+
+        function startGame() {
+            childName = nameInput.value.trim();
+            if (!childName) {
+                alert("Por favor, digite seu nome!");
+                return;
+            }
+
+            loadVoices();
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.play();
+                    startScreen.style.display = "none";
+                    scannerFrame.style.display = "block";
+                    bottomArea.style.display = "flex";
+                    exitBtn.style.display = "flex";
+                    skipBtn.style.display = "none"; 
+                    gameStarted = true;
+                    requestAnimationFrame(loop);
+                    speak("Olá, " + childName + "! Vamos caçar cores?", () => { nextChallenge(); });
+                })
+                .catch(err => {
+                    alert("Erro: Câmera não encontrada.");
+                });
+        }
+
+        function endGame() {
+            gameStarted = false;
+            lockGame = true;
+            clearTimeout(idleTimer15);
+            clearTimeout(idleTimer60);
+            speak("Até logo, " + childName, () => { location.reload(); });
+        }
+
+        function resetIdle() {
+            clearTimeout(idleTimer15);
+            clearTimeout(idleTimer60);
+            idleTimer15 = setTimeout(() => {
+                if(!lockGame && gameStarted) {
+                    speak(childName + ", você ainda está aí? \nSe não encontrar algo " + currentTarget + ", vamos para a próxima.");
+                }
+            }, 15000); 
+            idleTimer60 = setTimeout(() => {
+                if(!lockGame && gameStarted) {
+                    speak(childName + ", aguardo você para iniciarmos uma nova jornada.", () => { location.reload(); });
+                }
+            }, 60000);
+        }
+
+        function nextChallenge() {
+            if(lockGame || !gameStarted) return;
+            resetIdle(); 
+            let next = challenges[Math.floor(Math.random() * challenges.length)];
+            let attempts = 0;
+            while(next === currentTarget && challenges.length > 1 && attempts < 5) {
+                next = challenges[Math.floor(Math.random() * challenges.length)];
+                attempts++;
+            }
+            currentTarget = next;
+            const t = targets[currentTarget];
+            targetText.innerText = currentTarget;
+            targetText.style.color = t.color;
+            targetDot.style.backgroundColor = t.color;
+            targetBar.style.transform = "scale(1)"; 
+            
+            curiosityCard.classList.remove('active');
+            
+            skipBtn.style.display = "flex"; 
+            scannerFrame.style.borderColor = "#FFF";
+            holdCounter = 0;
+            wrongColorCounter = 0;
+            speak("Encontre algo " + currentTarget + "!"); 
+        }
+
+        function skipChallenge() {
+            if(!gameStarted || lockGame || !currentTarget) return;
+            lockGame = true;
+            clearTimeout(idleTimer15);
+            skipBtn.style.opacity = "0.5";
+            const t = targets[currentTarget];
+            const factObj = t.facts[Math.floor(Math.random() * t.facts.length)];
+            const phrase = "Tudo bem, " + childName + ", você sabia que " + factObj.text;
+            showVisualContent(factObj, "MISSÃO PULADA", t.color);
+            speak(phrase, function() {
+                setTimeout(() => { lockGame = false; skipBtn.style.opacity = "1"; nextChallenge(); }, 4000); 
+            });
+        }
+
+        function victory() {
+            lockGame = true;
+            clearTimeout(idleTimer15);
+            const t = targets[currentTarget];
+            const factObj = t.facts[Math.floor(Math.random() * t.facts.length)];
+            scannerFrame.style.borderColor = t.color;
+            const phrase = "Você sabia que " + factObj.text;
+            showVisualContent(factObj, "ALVO LOCALIZADO!", t.color);
+            speak(phrase, function() {
+                setTimeout(() => { lockGame = false; nextChallenge(); }, 4000); 
+            });
+        }
+
+        function showVisualContent(factObj, title, color) {
+            victoryTitle.innerText = title;
+            victoryTitle.style.color = color;
+            
+            curiosityCard.classList.add('active');
+
+            curiosityImage.style.display = "block";
+            backupEmoji.style.display = "none";
+            curiosityImage.src = factObj.img;
+            
+            // Backup automático se a imagem falhar
+            curiosityImage.onerror = function() {
+                this.style.display = "none";
+                backupEmoji.innerText = factObj.emoji;
+                backupEmoji.style.display = "block";
+            };
+        }
+
+        function loop() {
+            if (!video.videoWidth) { requestAnimationFrame(loop); return; }
+            if (canvas.width !== video.videoWidth) { canvas.width = video.videoWidth; canvas.height = video.videoHeight; }
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            if (!gameStarted) { requestAnimationFrame(loop); return; }
+            const cx = Math.floor(canvas.width / 2);
+            const cy = Math.floor(canvas.height / 2);
+            const pData = ctx.getImageData(cx - 15, cy - 15, 30, 30).data;
+            let r=0, g=0, b=0, c=0;
+            for (let i = 0; i < pData.length; i += 4) { r += pData[i]; g += pData[i+1]; b += pData[i+2]; c++; }
+            r = Math.floor(r/c); g = Math.floor(g/c); b = Math.floor(b/c);
+            const hsl = rgbToHsl(r, g, b);
+            analyzeColor(hsl[0], hsl[1], hsl[2]);
+            requestAnimationFrame(loop);
+        }
+
+        function analyzeColor(h, s, l) {
+            if (lockGame || !gameStarted || !currentTarget) return;
+            let detectedName = null;
+            for (let name of challenges) {
+                const t = targets[name];
+                let minSat = t.satMin;
+                if (l > 85) minSat = 40; 
+                let match = false;
+                if (name === "Vermelho") { 
+                    if (h >= t.hueMin || h <= t.hueMax) match = true; 
+                } else { 
+                    if (h >= t.hueMin && h <= t.hueMax) match = true; 
+                }
+                if (match && s >= minSat && l >= t.ligMin && l <= t.ligMax) {
+                    detectedName = name; 
+                    break; 
+                }
+            }
+
+            if (detectedName === currentTarget) {
+                wrongColorCounter = 0; holdCounter++;
+                if(holdCounter > 5) scannerFrame.style.borderColor = targets[currentTarget].color; 
+                if (holdCounter > 30) victory(); 
+            } else {
+                holdCounter = 0; scannerFrame.style.borderColor = "#FFF";
+                if (detectedName && detectedName !== currentTarget) {
+                    if (detectedName === lastWrongColorName) wrongColorCounter++;
+                    else { wrongColorCounter = 0; lastWrongColorName = detectedName; }
+                    if (wrongColorCounter > 60 && !errorCooldown && !window.speechSynthesis.speaking) {
+                        resetIdle(); triggerErrorFeedback(detectedName);
+                    }
+                }
+            }
+        }
+
+        function triggerErrorFeedback(wrongColor) {
+            errorCooldown = true; 
+            speak("Isso parece " + wrongColor + ". Procure algo " + currentTarget + ".", function() {
+                setTimeout(() => { errorCooldown = false; }, 2000);
+            });
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255, g /= 255, b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            if (max == min) { h = s = 0; } 
+            else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                } h /= 6;
+            } return [h * 360, s * 100, l * 100];
+        }
+
+        function speak(text, callback) {
+            bubbleText.innerText = text; bubbleText.style.opacity = "1"; 
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let cleanText = text.replace(/\n/g, " ");
+                const u = new SpeechSynthesisUtterance(cleanText);
+                u.lang = 'pt-BR'; u.rate = 1.0; u.pitch = 1.2; 
+                if (voice) u.voice = voice;
+                u.onend = function() { if(callback) callback(); };
+                u.onerror = function() { if(callback) callback(); };
+                window.speechSynthesis.speak(u);
+            } else { if(callback) setTimeout(callback, 2000); }
+        }
+    </script>
+</body>
+</html>
