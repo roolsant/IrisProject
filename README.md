@@ -5,6 +5,8 @@
 
 ![Version](https://img.shields.io/badge/version-MVP-blue) ![Status](https://img.shields.io/badge/status-Active-success) ![Privacy](https://img.shields.io/badge/privacy-Safe-green)
 
+---
+
 ## 🇬🇧 About the Project
 
 **IrisProject** is an interactive MVP designed to help children explore the real world through technology. The game uses the device's camera to recognize colors in the environment, encouraging active play and discovery away from passive screens.
@@ -41,15 +43,17 @@ Estamos construindo uma plataforma educacional completa. Atualizações futuras 
 
 ## 🚀 How to Play / Como Jogar
 
-1.  Open the game link on your mobile phone. (*Link will be available soon*)
+### 🇬🇧 English Instructions
+1.  Open the game link on your mobile phone. (*Link available soon*)
 2.  Allow camera access when asked.
 3.  Listen to **Íris** (the robot) and find the color she asks for!
 4.  Point the camera at a real object with that color to win.
 
-1.  *Abra o link do jogo no seu celular. (Link estará disponível em breve)*
-2.  *Permita o acesso à câmera quando solicitado.*
-3.  *Ouça a **Íris** (a robô) e encontre a cor que ela pedir!*
-4.  *Aponte a câmera para um objeto real com aquela cor para ganhar.*
+### 🇧🇷 Instruções em Português
+1.  Abra o link do jogo no seu celular. (*Link disponível em breve*)
+2.  Permita o acesso à câmera quando solicitado.
+3.  Ouça a **Íris** (a robô) e encontre a cor que ela pedir!
+4.  Aponte a câmera para um objeto real com aquela cor para ganhar.
 
 ---
 
@@ -61,5 +65,5 @@ Estamos construindo uma plataforma educacional completa. Atualizações futuras 
 
 ---
 
-> **Disclaimer:** This project is an MVP (Minimum Viable Product) for educational purposes.
+> **Disclaimer:** This project is an MVP (Minimum Viable Product) for educational purposes.  
 > *Este projeto é um MVP (Produto Mínimo Viável) para fins educativos.*
