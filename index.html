@@ -133,7 +133,8 @@
         @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .modal-title { font-size: 24px; color: #E64A19; font-weight: 800; margin-bottom: 15px; }
-        .modal-list li { margin-bottom: 8px; font-weight: 600; }
+        /* Ajuste do tamanho da fonte da lista para caber melhor */
+        .modal-list li { margin-bottom: 10px; font-weight: 600; font-size: 16px; line-height: 1.4; }
         
         .modal-btn {
             background: #4CAF50; color: white; border: none; padding: 12px 30px;
@@ -238,7 +239,7 @@
         #skip-btn:active { transform: translateY(6px); box-shadow: none; }
         canvas { display: none; }
 
-        /* Ajustes Mobile (CORREÇÃO DE LAYOUT) */
+        /* Ajustes Mobile (CORRIGIDO PARA NÃO COBRIR O TÍTULO) */
         @media (max-width: 600px) {
             .visual-container { width: 260px; height: 260px; margin-bottom: 5px; }
             #camera-lens-img { width: 200px; height: 200px; }
@@ -250,7 +251,7 @@
             #s-aquarela { top: 1%; left: 1%; }
             #s-arcoiris { top: 1%; right: 1%; width: 70px !important; }
             
-            /* AQUI ESTÁ A CORREÇÃO: Morango e Flor mais pra baixo */
+            /* Posição Mobile Corrigida (Mais baixo para não pegar no Título) */
             #s-morango { top: 22%; left: -5px; } 
             #s-flor { top: 22%; right: -5px; }
             
@@ -273,7 +274,7 @@
                 <li>🏠 Brinque em local seguro e fechado.</li>
                 <li>👨‍👩‍👧 Sempre com um adulto junto.</li>
                 <li>🚫 Não corra para não se machucar.</li>
-                <li>💡 Acenda a luz para eu ver as cores!</li>
+                <li>💡 Esteja em local bem iluminado para eu ver as cores!</li>
             </ul>
             <button class="modal-btn" onclick="confirmStart()">ENTENDI, VAMOS LÁ!</button>
         </div>
@@ -349,7 +350,7 @@
     </div>
 
     <script>
-        /* --- LÓGICA V1.3 --- */
+        /* --- LÓGICA V1.4 (Texto Falado Atualizado) --- */
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -409,7 +410,7 @@
             if (!voice) voice = voices.find(v => v.lang.includes('pt-BR'));
         }
 
-        // --- SISTEMA DE INÍCIO COM SEGURANÇA ---
+        // --- SISTEMA DE INÍCIO COM SEGURANÇA E FALA CORRIGIDA ---
         function showSafetyWarning() {
             childName = nameInput.value.trim();
             if (!childName) {
@@ -417,10 +418,11 @@
                 return;
             }
             loadVoices();
-            // Mostra o modal
             safetyModal.style.display = "flex";
-            // Fala o aviso
-            speak("Atenção! Brinque em um local seguro e fechado. Sempre com um adulto. Não corra. E acenda a luz para eu ver as cores!");
+            
+            // Texto falado pausadamente para não cortar
+            const aviso = "Atenção! Brinque sempre em um local seguro e fechado. Esteja sempre acompanhado de um adulto. Não corra para não se machucar. E brinque em um local bem iluminado para eu ver as cores!";
+            speak(aviso);
         }
 
         function confirmStart() {
@@ -521,7 +523,6 @@
             });
         }
 
-        // --- SISTEMA DE VITÓRIA ---
         function victory() {
             lockGame = true;
             clearTimeout(idleTimer15);
