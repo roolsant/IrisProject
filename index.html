@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Caça-Cores</title>
     
-	<link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0288D1">
     <link rel="apple-touch-icon" href="img/icon-192.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* --- BLOCO 1: ESTILO GERAL (BASE) --- */
+        /* --- BLOCO 1: ESTILO GERAL --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body { 
@@ -31,24 +35,17 @@
             background-size: 400% 400%;
             animation: rainbowBG 18s ease infinite;
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 2000;
-            padding: 15px;
-            overflow: hidden;
+            z-index: 2000; padding: 15px; overflow: hidden;
         }
+        @keyframes rainbowBG { 0% {background-position: 0% 50%} 50% {background-position: 100% 50%} 100% {background-position: 0% 50%} }
 
-        @keyframes rainbowBG { 
-            0% {background-position: 0% 50%} 50% {background-position: 100% 50%} 100% {background-position: 0% 50%}
-        }
-
-        /* --- STICKERS (Configuração Padrão PC) --- */
+        /* --- STICKERS (Posições PC) --- */
         .bg-sticker {
             position: absolute; z-index: 0; 
             filter: drop-shadow(3px 5px 2px rgba(0,0,0,0.15));
-            pointer-events: none; opacity: 0.95;
-            transition: all 0.3s ease; /* Suaviza a mudança quando gira a tela */
+            pointer-events: none; opacity: 0.95; transition: all 0.3s ease;
         }
-
-        /* Posições PC */
+        
         #s-aquarela { top: 2%; left: 2%; width: 70px; transform: rotate(-15deg); }
         #s-arcoiris { top: 2%; right: 2%; width: 90px; transform: rotate(5deg); }
         #s-sol { top: 15%; right: 5%; width: 70px; transform: rotate(10deg); }
@@ -66,16 +63,14 @@
         #s-tigre { bottom: 12%; right: 18%; width: 55px; transform: rotate(5deg); }
         #s-porquinho { bottom: 2%; right: 2%; width: 60px; transform: rotate(-15deg); }
 
-        /* --- TÍTULO --- */
+        /* --- ELEMENTOS CENTRAIS --- */
         #game-title-img {
             width: 90%; max-width: 360px; height: auto; margin-bottom: 5px;
             filter: drop-shadow(0px 5px 0px rgba(0,0,0,0.15));
-            animation: floatTitle 3s ease-in-out infinite;
-            position: relative; z-index: 10;
+            animation: floatTitle 3s ease-in-out infinite; position: relative; z-index: 10;
         }
         @keyframes floatTitle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-        /* --- VISUAL CENTRAL --- */
         .visual-container {
             position: relative; width: 300px; height: 300px;
             display: flex; align-items: center; justify-content: center;
@@ -83,8 +78,7 @@
         }
         #camera-lens-img {
             width: 240px; height: 240px; object-fit: contain;
-            position: relative; z-index: 1;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.25));
+            position: relative; z-index: 1; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.25));
         }
         #mascot-intro-img {
             position: absolute; right: -15px; bottom: -5px; width: 160px;
@@ -93,7 +87,6 @@
         }
         @keyframes floatMascot { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-5px) rotate(2deg); } }
 
-        /* --- INPUTS --- */
         #player-name {
             padding: 12px; font-size: 18px; border-radius: 50px; border: 4px solid #fff;
             width: 85%; max-width: 280px; margin-bottom: 15px; text-align: center;
@@ -123,49 +116,47 @@
             line-height: 1.3; text-transform: uppercase; z-index: 10;
         }
 
-        /* =========================================
-           AJUSTES PARA CELULAR (MODO RETRATO)
-           ========================================= */
-        @media (max-width: 600px) {
-            /* Diminuir um pouco o container central para caber em telas pequenas */
-            .visual-container { width: 260px; height: 260px; margin-bottom: 5px; }
-            #camera-lens-img { width: 200px; height: 200px; }
-            #mascot-intro-img { width: 130px; right: -5px; bottom: 0px; }
-            #game-title-img { max-width: 300px; margin-top: 10px; }
-
-            /* Reorganizar Stickers para não cobrir o texto no celular */
-            /* Diminuir o tamanho geral dos stickers no celular */
-            .bg-sticker { width: 45px !important; } 
-            
-            /* Empurrar para os cantos extremos */
-            #s-aquarela { top: 1%; left: 1%; }
-            #s-arcoiris { top: 1%; right: 1%; width: 70px !important; }
-            
-            #s-morango { top: 15%; left: -5px; } /* Mais pra borda */
-            #s-flor { top: 15%; right: -5px; }   /* Mais pra borda */
-            
-            #s-sol { top: 28%; right: -10px; }   /* Longe do título */
-            #s-estrela { top: 28%; left: -10px; } /* Longe do título */
-
-            #s-sorvete { top: 45%; left: -5px; }
-            #s-giz { top: 45%; right: -5px; }
-
-            /* Área inferior (evitar sobrepor o subtítulo) */
-            #s-bombeiro { bottom: 2%; left: 2%; width: 60px !important; }
-            #s-tigre { bottom: 2%; right: 2%; }
-            
-            /* Esconder alguns stickers no celular para não poluir demais */
-            #s-gatinho, #s-cachorrinho, #s-frutas, #s-polvo { display: none; }
+        /* --- POPUPS (MODAIS) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none; 
+            align-items: center; justify-content: center; z-index: 3000;
+            backdrop-filter: blur(5px);
         }
+        .modal-box {
+            background: #fff; width: 90%; max-width: 350px;
+            padding: 25px; border-radius: 25px; text-align: center;
+            border: 6px solid #03A9F4;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* --- JOGO PRINCIPAL --- */
+        .modal-title { font-size: 24px; color: #E64A19; font-weight: 800; margin-bottom: 15px; }
+        .modal-list li { margin-bottom: 8px; font-weight: 600; }
+        
+        .modal-btn {
+            background: #4CAF50; color: white; border: none; padding: 12px 30px;
+            font-size: 20px; border-radius: 50px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 5px 0px #388E3C; width: 100%; font-family: 'Fredoka', sans-serif;
+        }
+        .modal-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        #congrats-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90%; max-width: 350px; background: rgba(255,255,255,0.95);
+            border-radius: 30px; padding: 30px; border: 5px solid #FFD600;
+            text-align: center; display: none; z-index: 100;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        #congrats-text { font-size: 28px; color: #0277BD; font-weight: 800; margin-bottom: 10px; }
+        #congrats-sub { font-size: 20px; color: #555; }
+
+        /* --- JOGO --- */
         #exit-btn {
-            position: absolute; top: 15px; right: 15px;
-            background-color: #FF5252; color: white; border: none;
-            width: 45px; height: 45px; border-radius: 50%;
-            font-weight: bold; font-size: 20px;
-            cursor: pointer; z-index: 1000; display: none;
-            box-shadow: 0 4px 0px #D32F2F;
+            position: absolute; top: 15px; right: 15px; background-color: #FF5252; color: white; border: none;
+            width: 45px; height: 45px; border-radius: 50%; font-weight: bold; font-size: 20px;
+            cursor: pointer; z-index: 1000; display: none; box-shadow: 0 4px 0px #D32F2F;
             align-items: center; justify-content: center;
         }
         #exit-btn:active { transform: translateY(4px); box-shadow: none; }
@@ -224,7 +215,6 @@
             display: flex; align-items: flex-end; justify-content: center;
             width: 100%; padding: 0 10px; margin-bottom: 10px;
         }
-        
         #in-game-mascot {
             width: 120px; height: auto; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
             margin-right: -10px; z-index: 205; animation: breatheMascot 3s ease-in-out infinite;
@@ -247,39 +237,76 @@
         }
         #skip-btn:active { transform: translateY(6px); box-shadow: none; }
         canvas { display: none; }
+
+        /* Ajustes Mobile (CORREÇÃO DE LAYOUT) */
+        @media (max-width: 600px) {
+            .visual-container { width: 260px; height: 260px; margin-bottom: 5px; }
+            #camera-lens-img { width: 200px; height: 200px; }
+            #mascot-intro-img { width: 130px; right: -5px; bottom: 0px; }
+            #game-title-img { max-width: 300px; margin-top: 10px; }
+            
+            .bg-sticker { width: 45px !important; } 
+            
+            #s-aquarela { top: 1%; left: 1%; }
+            #s-arcoiris { top: 1%; right: 1%; width: 70px !important; }
+            
+            /* AQUI ESTÁ A CORREÇÃO: Morango e Flor mais pra baixo */
+            #s-morango { top: 22%; left: -5px; } 
+            #s-flor { top: 22%; right: -5px; }
+            
+            #s-sol { top: 35%; right: -10px; }
+            #s-estrela { top: 35%; left: -10px; }
+            #s-sorvete { top: 50%; left: -5px; }
+            #s-giz { top: 50%; right: -5px; }
+            #s-bombeiro { bottom: 2%; left: 2%; width: 60px !important; }
+            #s-tigre { bottom: 2%; right: 2%; }
+            #s-gatinho, #s-cachorrinho, #s-frutas, #s-polvo { display: none; }
+        }
     </style>
 </head>
 <body>
 
+    <div id="safety-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-title">⚠️ ATENÇÃO!</div>
+            <ul class="modal-list" style="text-align: left; list-style: none; padding: 0;">
+                <li>🏠 Brinque em local seguro e fechado.</li>
+                <li>👨‍👩‍👧 Sempre com um adulto junto.</li>
+                <li>🚫 Não corra para não se machucar.</li>
+                <li>💡 Acenda a luz para eu ver as cores!</li>
+            </ul>
+            <button class="modal-btn" onclick="confirmStart()">ENTENDI, VAMOS LÁ!</button>
+        </div>
+    </div>
+
     <div id="start-screen">
-        
-        <img id="s-aquarela" class="bg-sticker" src="img/stickers/sticker_aquarela.png" alt="Aquarela">
-        <img id="s-sol" class="bg-sticker" src="img/stickers/sticker_sol.png" alt="Sol">
-        <img id="s-arcoiris" class="bg-sticker" src="img/stickers/sticker_arcoiris.png" alt="Arco-íris">
-        <img id="s-morango" class="bg-sticker" src="img/stickers/sticker_morango.png" alt="Morango">
-        <img id="s-flor" class="bg-sticker" src="img/stickers/sticker_flor.png" alt="Flor">
-        <img id="s-estrela" class="bg-sticker" src="img/stickers/sticker_estrela.png" alt="Estrela">
-        <img id="s-giz" class="bg-sticker" src="img/stickers/sticker_giz.png" alt="Giz">
-        <img id="s-sorvete" class="bg-sticker" src="img/stickers/sticker_sorvete.png" alt="Sorvete">
-        <img id="s-frutas" class="bg-sticker" src="img/stickers/sticker_frutas.png" alt="Frutas">
-        <img id="s-gatinho" class="bg-sticker" src="img/stickers/sticker_gatinho.png" alt="Gatinho">
-        <img id="s-cachorrinho" class="bg-sticker" src="img/stickers/sticker_cachorrinho.png" alt="Cachorrinho">
-        <img id="s-polvo" class="bg-sticker" src="img/stickers/sticker_polvo.png" alt="Polvo">
-        <img id="s-tigre" class="bg-sticker" src="img/stickers/sticker_tigre.png" alt="Tigre">
-        <img id="s-sapo" class="bg-sticker" src="img/stickers/sticker_sapo.png" alt="Sapo">
-        <img id="s-porquinho" class="bg-sticker" src="img/stickers/sticker_porquinho.png" alt="Porquinho">
-        <img id="s-bombeiro" class="bg-sticker" src="img/stickers/sticker_caminhao_bombeiro.png" alt="Bombeiro">
+        <img id="s-aquarela" class="bg-sticker" src="img/stickers/sticker_aquarela.png">
+        <img id="s-sol" class="bg-sticker" src="img/stickers/sticker_sol.png">
+        <img id="s-arcoiris" class="bg-sticker" src="img/stickers/sticker_arcoiris.png">
+        <img id="s-morango" class="bg-sticker" src="img/stickers/sticker_morango.png">
+        <img id="s-flor" class="bg-sticker" src="img/stickers/sticker_flor.png">
+        <img id="s-estrela" class="bg-sticker" src="img/stickers/sticker_estrela.png">
+        <img id="s-giz" class="bg-sticker" src="img/stickers/sticker_giz.png">
+        <img id="s-sorvete" class="bg-sticker" src="img/stickers/sticker_sorvete.png">
+        <img id="s-frutas" class="bg-sticker" src="img/stickers/sticker_frutas.png">
+        <img id="s-gatinho" class="bg-sticker" src="img/stickers/sticker_gatinho.png">
+        <img id="s-cachorrinho" class="bg-sticker" src="img/stickers/sticker_cachorrinho.png">
+        <img id="s-polvo" class="bg-sticker" src="img/stickers/sticker_polvo.png">
+        <img id="s-tigre" class="bg-sticker" src="img/stickers/sticker_tigre.png">
+        <img id="s-sapo" class="bg-sticker" src="img/stickers/sticker_sapo.png">
+        <img id="s-porquinho" class="bg-sticker" src="img/stickers/sticker_porquinho.png">
+        <img id="s-bombeiro" class="bg-sticker" src="img/stickers/sticker_caminhao_bombeiro.png">
 
         <img id="game-title-img" src="img/titulo_game.png" alt="CAÇA-CORES!">
         
         <div class="visual-container">
-            <img id="camera-lens-img" src="img/lente_camera.png" alt="Lente da Câmera">
-            <img id="mascot-intro-img" src="img/mascote_intro.png" alt="Camaleão">
+            <img id="camera-lens-img" src="img/lente_camera.png">
+            <img id="mascot-intro-img" src="img/mascote_intro.png">
         </div>
 
         <input type="text" id="player-name" placeholder="Digite seu nome" autocomplete="off">
         
-        <button id="start-btn" onclick="startGame()">
+        <button id="start-btn" onclick="showSafetyWarning()">
             <div class="cam-icon"></div> JOGAR AGORA!
         </button>
         
@@ -293,6 +320,11 @@
         <div id="crosshair"></div>
         <video id="video" autoplay playsinline muted></video>
         <canvas id="canvas"></canvas>
+
+        <div id="congrats-modal">
+            <div id="congrats-text">PARABÉNS! 🎉</div>
+            <div id="congrats-sub">Você encontrou!</div>
+        </div>
 
         <div id="curiosity-card">
             <div id="victory-title">MUITO BEM! 🎉</div>
@@ -310,15 +342,14 @@
 
     <div id="bottom-area">
         <div id="character-row">
-            <img id="in-game-mascot" src="img/mascote_intro.png" alt="Íris">
+            <img id="in-game-mascot" src="img/mascote_intro.png">
             <div id="speech-bubble">Olá! Digite seu nome para começar.</div>
         </div>
-
         <button id="skip-btn" onclick="skipChallenge()">PULAR ⏩</button>
     </div>
 
     <script>
-        /* --- LÓGICA V63 (MANTIDA) --- */
+        /* --- LÓGICA V1.3 --- */
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -336,6 +367,9 @@
         const startScreen = document.getElementById('start-screen');
         const bubbleText = document.getElementById('speech-bubble');
         const nameInput = document.getElementById('player-name');
+        const safetyModal = document.getElementById('safety-modal');
+        const congratsModal = document.getElementById('congrats-modal');
+        const congratsText = document.getElementById('congrats-text');
 
         let childName = "";
         let currentTarget = null; 
@@ -351,120 +385,15 @@
         let idleTimer60 = null; 
         let challengeBag = [];
 
+        /* -- BANCO DE DADOS -- */
         const targets = {
-            "Vermelho": { 
-                hueMin: 340, hueMax: 20, satMin: 40, ligMin: 20, ligMax: 80, color: "#FF1744", 
-                facts: [
-                    {text: "o morango é a única fruta com as sementes do lado de fora! São umas 200 sementinhas.", img: "img/vermelho/morango_vermelho.jpg", emoji: "🍓"},
-                    {text: "existem morangos brancos e amarelos, não só vermelhos!", img: "img/vermelho/morango_vermelho.jpg", emoji: "🍓"},
-                    {text: "o morango é da família das rosas. As flores deles são parecidas!", img: "img/vermelho/morango_vermelho.jpg", emoji: "🍓"},
-                    {text: "a escada desse caminhão pode esticar até 60 metros de altura para salvamentos.", img: "img/vermelho/bombeiro_vermelho.jpg", emoji: "🚒"},
-                    {text: "o vermelho serve para todo mundo ver o caminhão bem rápido na rua!", img: "img/vermelho/bombeiro_vermelho.jpg", emoji: "🚒"},
-                    {text: "um caminhão de bombeiro pode carregar 5 mil litros de água.", img: "img/vermelho/bombeiro_vermelho.jpg", emoji: "🚒"},
-                    {text: "a joaninha come pulgões e ajuda a proteger as plantinhas do jardim.", img: "img/vermelho/joaninha_vermelha.jpg", emoji: "🐞"},
-                    {text: "a cor vermelha e preta avisa os passarinhos que ela não tem um gosto bom.", img: "img/vermelho/joaninha_vermelha.jpg", emoji: "🐞"},
-                    {text: "quando a joaninha dorme no inverno, ela se junta com outras para se esquentar.", img: "img/vermelho/joaninha_vermelha.jpg", emoji: "🐞"},
-                    {text: "a casca da maçã tem muitas vitaminas. É bom lavar bem e comer!", img: "img/vermelho/maca_vermelha.jpg", emoji: "🍎"},
-                    {text: "existem milhares de tipos de maçã no mundo. A Fuji é uma das mais doces!", img: "img/vermelho/maca_vermelha.jpg", emoji: "🍎"},
-                    {text: "maçãs ajudam a limpar os dentes enquanto você mastiga, pois são crocantes.", img: "img/vermelho/maca_vermelha.jpg", emoji: "🍎"},
-                    {text: "rosas vermelhas são usadas há milhares de anos para dizer 'você é especial'.", img: "img/vermelho/rosa_vermelha.jpg", emoji: "🌹"},
-                    {text: "o Equador é o país que mais produz rosas no mundo.", img: "img/vermelho/rosa_vermelha.jpg", emoji: "🌹"}
-                ] 
-            },
-            "Laranja": { 
-                hueMin: 21, hueMax: 35, satMin: 40, ligMin: 30, ligMax: 85, color: "#FF6D00", 
-                facts: [
-                    {text: "antigamente as cenouras eram roxas ou brancas, não laranjas!", img: "img/laranja/cenoura_laranja.jpg", emoji: "🥕"},
-                    {text: "comer cenoura ajuda seus olhos a enxergarem melhor e protege a pele.", img: "img/laranja/cenoura_laranja.jpg", emoji: "🥕"},
-                    {text: "a cenoura é parente da salsinha que a gente usa na salada.", img: "img/laranja/cenoura_laranja.jpg", emoji: "🥕"},
-                    {text: "as listras do tigre funcionam como camuflagem para ele se esconder no mato.", img: "img/laranja/tigre_laranja.jpg", emoji: "🐅"},
-                    {text: "tigres adoram água e são ótimos nadadores, diferente dos gatinhos.", img: "img/laranja/tigre_laranja.jpg", emoji: "🐅"},
-                    {text: "o tigre consegue dar um pulo de 5 metros de altura!", img: "img/laranja/tigre_laranja.jpg", emoji: "🐅"},
-                    {text: "o nome da cor 'laranja' veio da fruta, sabia disso?", img: "img/laranja/fruta_laranja.jpg", emoji: "🍊"},
-                    {text: "o Brasil é o maior produtor de suco de laranja do mundo todo.", img: "img/laranja/fruta_laranja.jpg", emoji: "🍊"},
-                    {text: "a bola de basquete é laranja para os jogadores verem ela melhor na quadra.", img: "img/laranja/basquete_laranja.jpg", emoji: "🏀"},
-                    {text: "as linhas pretas na bola ajudam a mão a não escorregar e mantêm o formato.", img: "img/laranja/basquete_laranja.jpg", emoji: "🏀"},
-                    {text: "o peixe-palhaço tem uma gosminha no corpo que protege ele de queimaduras.", img: "img/laranja/peixe_laranja.jpg", emoji: "🐠"},
-                    {text: "o papai peixe-palhaço é quem cuida dos ovinhos até eles nascerem.", img: "img/laranja/peixe_laranja.jpg", emoji: "🐠"}
-                ] 
-            },
-            "Amarelo": { 
-                hueMin: 36, hueMax: 70, satMin: 30, ligMin: 20, ligMax: 95, color: "#FFD600", 
-                facts: [
-                    {text: "a luz do Sol leva 8 minutos para viajar do espaço até chegar aqui.", img: "img/amarelo/sol_amarelo.jpg", emoji: "☀️"},
-                    {text: "o Sol é tão grande que caberiam um milhão de Terras dentro dele.", img: "img/amarelo/sol_amarelo.jpg", emoji: "☀️"},
-                    {text: "o girassol jovem gira o pescoço para acompanhar o sol no céu.", img: "img/amarelo/girassol_amarelo.jpg", emoji: "🌻"},
-                    {text: "as sementes do girassol formam um desenho matemático perfeito.", img: "img/amarelo/girassol_amarelo.jpg", emoji: "🌻"},
-                    {text: "a banana dá muita energia para brincar e evita cãibras na perna.", img: "img/amarelo/banana_amarela.jpg", emoji: "🍌"},
-                    {text: "a casca da banana também tem vitaminas e pode ser usada em bolos.", img: "img/amarelo/banana_amarela.jpg", emoji: "🍌"},
-                    {text: "o pintinho já conversa piando dentro do ovo antes de nascer.", img: "img/amarelo/pintinho_amarelo.jpg", emoji: "🐥"},
-                    {text: "pintinhos nascem com olhos abertos e já sabem andar e comer.", img: "img/amarelo/pintinho_amarelo.jpg", emoji: "🐥"},
-                    {text: "o limão siciliano é amarelinho e tem sabor mais suave que o limão verde.", img: "img/amarelo/limao_amarelo.jpg", emoji: "🍋"},
-                    {text: "a vitamina do limão ajuda a gente a não pegar gripe.", img: "img/amarelo/limao_amarelo.jpg", emoji: "🍋"}
-                ] 
-            },
-            "Verde": { 
-                hueMin: 71, hueMax: 165, satMin: 25, ligMin: 15, ligMax: 90, color: "#00E676", 
-                facts: [
-                    {text: "as árvores conversam umas com as outras pelas raízes debaixo da terra.", img: "img/verde/arvore_verde.jpg", emoji: "🌳"},
-                    {text: "uma árvore grande pode beber muita água e evitar enchentes.", img: "img/verde/arvore_verde.jpg", emoji: "🌳"},
-                    {text: "as árvores limpam o ar e deixam a cidade mais fresca.", img: "img/verde/arvore_verde.jpg", emoji: "🌳"},
-                    {text: "na natureza, cores brilhantes como a do sapo verde avisam: 'não me toque!'", img: "img/verde/sapo_verde.jpg", emoji: "🐸"},
-                    {text: "esse sapinho vive na floresta Amazônica e adora lugares úmidos.", img: "img/verde/sapo_verde.jpg", emoji: "🐸"},
-                    {text: "o brócolis tem tanto cálcio que ajuda a deixar seus ossos fortes.", img: "img/verde/brocolis_verde.jpg", emoji: "🥦"},
-                    {text: "o nome brócolis vem do italiano e significa 'brotos pontudos'.", img: "img/verde/brocolis_verde.jpg", emoji: "🥦"},
-                    {text: "a tartaruga verde pode viver mais de 80 anos viajando pelo mar.", img: "img/verde/tartaruga_verde.jpg", emoji: "🐢"},
-                    {text: "elas conseguem prender a respiração por muitos minutos embaixo d'água.", img: "img/verde/tartaruga_verde.jpg", emoji: "🐢"},
-                    {text: "o abacate tem uma gordura boa que faz bem para o coração.", img: "img/verde/abacate_verde.jpg", emoji: "🥑"},
-                    {text: "os povos antigos chamavam o abacate de 'ouro verde' por ser valioso.", img: "img/verde/abacate_verde.jpg", emoji: "🥑"}
-                ] 
-            },
-            "Azul": { 
-                hueMin: 176, hueMax: 260, satMin: 30, ligMin: 15, ligMax: 85, color: "#2979FF", 
-                facts: [
-                    {text: "o mar cobre quase todo o nosso planeta e produz o ar que respiramos.", img: "img/azul/oceano_azul.jpg", emoji: "🌊"},
-                    {text: "existem milhares de bichinhos no mar que a gente ainda nem descobriu.", img: "img/azul/oceano_azul.jpg", emoji: "🌊"},
-                    {text: "o céu é azul porque a luz do sol se espalha no ar.", img: "img/azul/ceu_azul.jpg", emoji: "☁️"},
-                    {text: "nossos olhos são sensíveis à cor azul, por isso vemos o céu assim.", img: "img/azul/ceu_azul.jpg", emoji: "☁️"},
-                    {text: "o bico da arara azul é tão forte que quebra sementes duras.", img: "img/azul/arara_azul.jpg", emoji: "🦜"},
-                    {text: "araras azuis gostam de conversar e fazem bastante barulho na floresta.", img: "img/azul/arara_azul.jpg", emoji: "🦜"},
-                    {text: "o mirtilo é uma frutinha super poderosa que ajuda na memória.", img: "img/azul/mirtilo_azul.jpg", emoji: "🫐"},
-                    {text: "essa cor azul escura vem de uma 'tinta' natural muito saudável.", img: "img/azul/mirtilo_azul.jpg", emoji: "🫐"},
-                    {text: "a baleia azul é o maior animal que já existiu, maior que os dinossauros!", img: "img/azul/baleia_azul.jpg", emoji: "🐋"},
-                    {text: "a língua de uma baleia azul pesa o mesmo que um elefante.", img: "img/azul/baleia_azul.jpg", emoji: "🐋"}
-                ] 
-            },
-            "Roxo": { 
-                hueMin: 256, hueMax: 295, satMin: 20, ligMin: 15, ligMax: 80, color: "#AA00FF", 
-                facts: [
-                    {text: "uvas roxas fazem bem para o coração e dão energia.", img: "img/roxo/uva_roxa.jpg", emoji: "🍇"},
-                    {text: "se a uva roxa secar no sol, ela vira uma uva-passa!", img: "img/roxo/uva_roxa.jpg", emoji: "🍇"},
-                    {text: "o cheirinho da lavanda ajuda a gente a ficar calmo e dormir bem.", img: "img/roxo/lavanda_roxa.jpg", emoji: "🌸"},
-                    {text: "lavandas gostam de muito sol para crescerem bonitas e cheirosas.", img: "img/roxo/lavanda_roxa.jpg", emoji: "🌸"},
-                    {text: "a beringela é parente do tomate e da batata.", img: "img/roxo/beringela_roxa.jpg", emoji: "🍆"},
-                    {text: "comemos o fruto da beringela, mas as folhas a gente deixa pra lá!", img: "img/roxo/beringela_roxa.jpg", emoji: "🍆"},
-                    {text: "o polvo tem 3 corações e é muito inteligente.", img: "img/roxo/polvo_roxo.jpg", emoji: "🐙"},
-                    {text: "esse polvo mostra anéis azuis brilhantes para avisar que é perigoso.", img: "img/roxo/polvo_roxo.jpg", emoji: "🐙"},
-                    {text: "o polvo consegue mudar de cor para se esconder na areia.", img: "img/roxo/polvo_roxo.jpg", emoji: "🐙"},
-                    {text: "ametista é uma pedra preciosa que reis e rainhas adoravam usar.", img: "img/roxo/ametista_roxa.jpg", emoji: "💎"},
-                    {text: "a ametista fica com essa cor roxa por causa do calor no fundo da terra.", img: "img/roxo/ametista_roxa.jpg", emoji: "💎"}
-                ] 
-            },
-            "Rosa": { 
-                hueMin: 296, hueMax: 339, satMin: 30, ligMin: 40, ligMax: 90, color: "#FF4081", 
-                facts: [
-                    {text: "o flamingo nasce branco! Ele fica rosa porque come camarãozinho.", img: "img/rosa/flamingo_rosa.jpg", emoji: "🦩"},
-                    {text: "o flamingo consegue dormir em pé numa perna só.", img: "img/rosa/flamingo_rosa.jpg", emoji: "🦩"},
-                    {text: "o boto rosa vive nos rios da Amazônia e é muito brincalhão.", img: "img/rosa/boto_rosa.jpg", emoji: "🐬"},
-                    {text: "o boto rosa usa sons debaixo d'água para encontrar peixinhos para comer.", img: "img/rosa/boto_rosa.jpg", emoji: "🐬"},
-                    {text: "os porquinhos rolam na lama para se proteger do calor, igual protetor solar.", img: "img/rosa/porco_rosa.jpg", emoji: "🐷"},
-                    {text: "o porco é muito esperto e tem um olfato incrível.", img: "img/rosa/porco_rosa.jpg", emoji: "🐷"},
-                    {text: "flores cor-de-rosa atraem muitas borboletas para o jardim.", img: "img/rosa/flor_rosa.jpg", emoji: "🌸"},
-                    {text: "o hibisco rosa abre de manhã e fecha de noite.", img: "img/rosa/flor_rosa.jpg", emoji: "🌸"},
-                    {text: "o sorvete quanto mais batido for, mais cremoso ele fica.", img: "img/rosa/sorvete_rosa.jpg", emoji: "🍦"},
-                    {text: "antigamente, o sorvete era uma mistura de neve com frutas e mel.", img: "img/rosa/sorvete_rosa.jpg", emoji: "🍦"}
-                ] 
-            }
+            "Vermelho": { hueMin: 340, hueMax: 20, satMin: 40, ligMin: 20, ligMax: 80, color: "#FF1744", facts: [ {text: "o morango é a única fruta com as sementes do lado de fora! São umas 200 sementinhas.", img: "img/vermelho/morango_vermelho.jpg", emoji: "🍓"}, {text: "existem morangos brancos e amarelos, não só vermelhos!", img: "img/vermelho/morango_vermelho.jpg", emoji: "🍓"}, {text: "o morango é da família das rosas. As flores deles são parecidas!", img: "img/vermelho/morango_vermelho.jpg", emoji: "🍓"}, {text: "a escada desse caminhão pode esticar até 60 metros de altura para salvamentos.", img: "img/vermelho/bombeiro_vermelho.jpg", emoji: "🚒"}, {text: "o vermelho serve para todo mundo ver o caminhão bem rápido na rua!", img: "img/vermelho/bombeiro_vermelho.jpg", emoji: "🚒"}, {text: "um caminhão de bombeiro pode carregar 5 mil litros de água.", img: "img/vermelho/bombeiro_vermelho.jpg", emoji: "🚒"}, {text: "a joaninha come pulgões e ajuda a proteger as plantinhas do jardim.", img: "img/vermelho/joaninha_vermelha.jpg", emoji: "🐞"}, {text: "a cor vermelha e preta avisa os passarinhos que ela não tem um gosto bom.", img: "img/vermelho/joaninha_vermelha.jpg", emoji: "🐞"}, {text: "quando a joaninha dorme no inverno, ela se junta com outras para se esquentar.", img: "img/vermelho/joaninha_vermelha.jpg", emoji: "🐞"}, {text: "a casca da maçã tem muitas vitaminas. É bom lavar bem e comer!", img: "img/vermelho/maca_vermelha.jpg", emoji: "🍎"}, {text: "existem milhares de tipos de maçã no mundo. A Fuji é uma das mais doces!", img: "img/vermelho/maca_vermelha.jpg", emoji: "🍎"}, {text: "maçãs ajudam a limpar os dentes enquanto você mastiga, pois são crocantes.", img: "img/vermelho/maca_vermelha.jpg", emoji: "🍎"}, {text: "rosas vermelhas são usadas há milhares de anos para dizer 'você é especial'.", img: "img/vermelho/rosa_vermelha.jpg", emoji: "🌹"}, {text: "o Equador é o país que mais produz rosas no mundo.", img: "img/vermelho/rosa_vermelha.jpg", emoji: "🌹"} ] },
+            "Laranja": { hueMin: 21, hueMax: 35, satMin: 40, ligMin: 30, ligMax: 85, color: "#FF6D00", facts: [ {text: "antigamente as cenouras eram roxas ou brancas, não laranjas!", img: "img/laranja/cenoura_laranja.jpg", emoji: "🥕"}, {text: "comer cenoura ajuda seus olhos a enxergarem melhor e protege a pele.", img: "img/laranja/cenoura_laranja.jpg", emoji: "🥕"}, {text: "a cenoura é parente da salsinha que a gente usa na salada.", img: "img/laranja/cenoura_laranja.jpg", emoji: "🥕"}, {text: "as listras do tigre funcionam como camuflagem para ele se esconder no mato.", img: "img/laranja/tigre_laranja.jpg", emoji: "🐅"}, {text: "tigres adoram água e são ótimos nadadores, diferente dos gatinhos.", img: "img/laranja/tigre_laranja.jpg", emoji: "🐅"}, {text: "o tigre consegue dar um pulo de 5 metros de altura!", img: "img/laranja/tigre_laranja.jpg", emoji: "🐅"}, {text: "o nome da cor 'laranja' veio da fruta, sabia disso?", img: "img/laranja/fruta_laranja.jpg", emoji: "🍊"}, {text: "o Brasil é o maior produtor de suco de laranja do mundo todo.", img: "img/laranja/fruta_laranja.jpg", emoji: "🍊"}, {text: "a bola de basquete é laranja para os jogadores verem ela melhor na quadra.", img: "img/laranja/basquete_laranja.jpg", emoji: "🏀"}, {text: "as linhas pretas na bola ajudam a mão a não escorregar e mantêm o formato.", img: "img/laranja/basquete_laranja.jpg", emoji: "🏀"}, {text: "o peixe-palhaço tem uma gosminha no corpo que protege ele de queimaduras.", img: "img/laranja/peixe_laranja.jpg", emoji: "🐠"}, {text: "o papai peixe-palhaço é quem cuida dos ovinhos até eles nascerem.", img: "img/laranja/peixe_laranja.jpg", emoji: "🐠"} ] },
+            "Amarelo": { hueMin: 36, hueMax: 70, satMin: 30, ligMin: 20, ligMax: 95, color: "#FFD600", facts: [ {text: "a luz do Sol leva 8 minutos para viajar do espaço até chegar aqui.", img: "img/amarelo/sol_amarelo.jpg", emoji: "☀️"}, {text: "o Sol é tão grande que caberiam um milhão de Terras dentro dele.", img: "img/amarelo/sol_amarelo.jpg", emoji: "☀️"}, {text: "o girassol jovem gira o pescoço para acompanhar o sol no céu.", img: "img/amarelo/girassol_amarelo.jpg", emoji: "🌻"}, {text: "as sementes do girassol formam um desenho matemático perfeito.", img: "img/amarelo/girassol_amarelo.jpg", emoji: "🌻"}, {text: "a banana dá muita energia para brincar e evita cãibras na perna.", img: "img/amarelo/banana_amarela.jpg", emoji: "🍌"}, {text: "a casca da banana também tem vitaminas e pode ser usada em bolos.", img: "img/amarelo/banana_amarela.jpg", emoji: "🍌"}, {text: "o pintinho já conversa piando dentro do ovo antes de nascer.", img: "img/amarelo/pintinho_amarelo.jpg", emoji: "🐥"}, {text: "pintinhos nascem com olhos abertos e já sabem andar e comer.", img: "img/amarelo/pintinho_amarelo.jpg", emoji: "🐥"}, {text: "o limão siciliano é amarelinho e tem sabor mais suave que o limão verde.", img: "img/amarelo/limao_amarelo.jpg", emoji: "🍋"}, {text: "a vitamina do limão ajuda a gente a não pegar gripe.", img: "img/amarelo/limao_amarelo.jpg", emoji: "🍋"} ] },
+            "Verde": { hueMin: 71, hueMax: 165, satMin: 25, ligMin: 15, ligMax: 90, color: "#00E676", facts: [ {text: "as árvores conversam umas com as outras pelas raízes debaixo da terra.", img: "img/verde/arvore_verde.jpg", emoji: "🌳"}, {text: "uma árvore grande pode beber muita água e evitar enchentes.", img: "img/verde/arvore_verde.jpg", emoji: "🌳"}, {text: "as árvores limpam o ar e deixam a cidade mais fresca.", img: "img/verde/arvore_verde.jpg", emoji: "🌳"}, {text: "na natureza, cores brilhantes como a do sapo verde avisam: 'não me toque!'", img: "img/verde/sapo_verde.jpg", emoji: "🐸"}, {text: "esse sapinho vive na floresta Amazônica e adora lugares úmidos.", img: "img/verde/sapo_verde.jpg", emoji: "🐸"}, {text: "o brócolis tem tanto cálcio que ajuda a deixar seus ossos fortes.", img: "img/verde/brocolis_verde.jpg", emoji: "🥦"}, {text: "o nome brócolis vem do italiano e significa 'brotos pontudos'.", img: "img/verde/brocolis_verde.jpg", emoji: "🥦"}, {text: "a tartaruga verde pode viver mais de 80 anos viajando pelo mar.", img: "img/verde/tartaruga_verde.jpg", emoji: "🐢"}, {text: "elas conseguem prender a respiração por muitos minutos embaixo d'água.", img: "img/verde/tartaruga_verde.jpg", emoji: "🐢"}, {text: "o abacate tem uma gordura boa que faz bem para o coração.", img: "img/verde/abacate_verde.jpg", emoji: "🥑"}, {text: "os povos antigos chamavam o abacate de 'ouro verde' por ser valioso.", img: "img/verde/abacate_verde.jpg", emoji: "🥑"} ] },
+            "Azul": { hueMin: 176, hueMax: 260, satMin: 30, ligMin: 15, ligMax: 85, color: "#2979FF", facts: [ {text: "o mar cobre quase todo o nosso planeta e produz o ar que respiramos.", img: "img/azul/oceano_azul.jpg", emoji: "🌊"}, {text: "existem milhares de bichinhos no mar que a gente ainda nem descobriu.", img: "img/azul/oceano_azul.jpg", emoji: "🌊"}, {text: "o céu é azul porque a luz do sol se espalha no ar.", img: "img/azul/ceu_azul.jpg", emoji: "☁️"}, {text: "nossos olhos são sensíveis à cor azul, por isso vemos o céu assim.", img: "img/azul/ceu_azul.jpg", emoji: "☁️"}, {text: "o bico da arara azul é tão forte que quebra sementes duras.", img: "img/azul/arara_azul.jpg", emoji: "🦜"}, {text: "araras azuis gostam de conversar e fazem bastante barulho na floresta.", img: "img/azul/arara_azul.jpg", emoji: "🦜"}, {text: "o mirtilo é uma frutinha super poderosa que ajuda na memória.", img: "img/azul/mirtilo_azul.jpg", emoji: "🫐"}, {text: "essa cor azul escura vem de uma 'tinta' natural muito saudável.", img: "img/azul/mirtilo_azul.jpg", emoji: "🫐"}, {text: "a baleia azul é o maior animal que já existiu, maior que os dinossauros!", img: "img/azul/baleia_azul.jpg", emoji: "🐋"}, {text: "a língua de uma baleia azul pesa o mesmo que um elefante.", img: "img/azul/baleia_azul.jpg", emoji: "🐋"} ] },
+            "Roxo": { hueMin: 256, hueMax: 295, satMin: 20, ligMin: 15, ligMax: 80, color: "#AA00FF", facts: [ {text: "uvas roxas fazem bem para o coração e dão energia.", img: "img/roxo/uva_roxa.jpg", emoji: "🍇"}, {text: "se a uva roxa secar no sol, ela vira uma uva-passa!", img: "img/roxo/uva_roxa.jpg", emoji: "🍇"}, {text: "o cheirinho da lavanda ajuda a gente a ficar calmo e dormir bem.", img: "img/roxo/lavanda_roxa.jpg", emoji: "🌸"}, {text: "lavandas gostam de muito sol para crescerem bonitas e cheirosas.", img: "img/roxo/lavanda_roxa.jpg", emoji: "🌸"}, {text: "a beringela é parente do tomate e da batata.", img: "img/roxo/beringela_roxa.jpg", emoji: "🍆"}, {text: "comemos o fruto da beringela, mas as folhas a gente deixa pra lá!", img: "img/roxo/beringela_roxa.jpg", emoji: "🍆"}, {text: "o polvo tem 3 corações e é muito inteligente.", img: "img/roxo/polvo_roxo.jpg", emoji: "🐙"}, {text: "esse polvo mostra anéis azuis brilhantes para avisar que é perigoso.", img: "img/roxo/polvo_roxo.jpg", emoji: "🐙"}, {text: "o polvo consegue mudar de cor para se esconder na areia.", img: "img/roxo/polvo_roxo.jpg", emoji: "🐙"}, {text: "ametista é uma pedra preciosa que reis e rainhas adoravam usar.", img: "img/roxo/ametista_roxa.jpg", emoji: "💎"}, {text: "a ametista fica com essa cor roxa por causa do calor no fundo da terra.", img: "img/roxo/ametista_roxa.jpg", emoji: "💎"} ] },
+            "Rosa": { hueMin: 296, hueMax: 339, satMin: 30, ligMin: 40, ligMax: 90, color: "#FF4081", facts: [ {text: "o flamingo nasce branco! Ele fica rosa porque come camarãozinho.", img: "img/rosa/flamingo_rosa.jpg", emoji: "🦩"}, {text: "o flamingo consegue dormir em pé numa perna só.", img: "img/rosa/flamingo_rosa.jpg", emoji: "🦩"}, {text: "o boto rosa vive nos rios da Amazônia e é muito brincalhão.", img: "img/rosa/boto_rosa.jpg", emoji: "🐬"}, {text: "o boto rosa usa sons debaixo d'água para encontrar peixinhos para comer.", img: "img/rosa/boto_rosa.jpg", emoji: "🐬"}, {text: "os porquinhos rolam na lama para se proteger do calor, igual protetor solar.", img: "img/rosa/porco_rosa.jpg", emoji: "🐷"}, {text: "o porco é muito esperto e tem um olfato incrível.", img: "img/rosa/porco_rosa.jpg", emoji: "🐷"}, {text: "flores cor-de-rosa atraem muitas borboletas para o jardim.", img: "img/rosa/flor_rosa.jpg", emoji: "🌸"}, {text: "o hibisco rosa abre de manhã e fecha de noite.", img: "img/rosa/flor_rosa.jpg", emoji: "🌸"}, {text: "o sorvete quanto mais batido for, mais cremoso ele fica.", img: "img/rosa/sorvete_rosa.jpg", emoji: "🍦"}, {text: "antigamente, o sorvete era uma mistura de neve com frutas e mel.", img: "img/rosa/sorvete_rosa.jpg", emoji: "🍦"} ] }
         };
 
         const challenges = Object.keys(targets);
@@ -480,13 +409,26 @@
             if (!voice) voice = voices.find(v => v.lang.includes('pt-BR'));
         }
 
-        function startGame() {
+        // --- SISTEMA DE INÍCIO COM SEGURANÇA ---
+        function showSafetyWarning() {
             childName = nameInput.value.trim();
             if (!childName) {
                 alert("Por favor, digite seu nome!");
                 return;
             }
             loadVoices();
+            // Mostra o modal
+            safetyModal.style.display = "flex";
+            // Fala o aviso
+            speak("Atenção! Brinque em um local seguro e fechado. Sempre com um adulto. Não corra. E acenda a luz para eu ver as cores!");
+        }
+
+        function confirmStart() {
+            safetyModal.style.display = "none";
+            startGame();
+        }
+
+        function startGame() {
             navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
                 .then(stream => {
                     video.srcObject = stream; video.play();
@@ -579,16 +521,30 @@
             });
         }
 
+        // --- SISTEMA DE VITÓRIA ---
         function victory() {
             lockGame = true;
             clearTimeout(idleTimer15);
             const t = targets[currentTarget];
             const factObj = getRandomFact(currentTarget);
             scannerFrame.style.borderColor = t.color;
-            const phrase = "Você sabia que " + factObj.text;
-            showVisualContent(factObj, "ALVO LOCALIZADO!", t.color);
-            speak(phrase, function() {
-                setTimeout(() => { lockGame = false; nextChallenge(); }, 1000); 
+
+            // 1. Mostrar Popup de Parabéns
+            congratsText.innerText = "PARABÉNS, " + childName.toUpperCase() + "!";
+            congratsText.style.color = t.color;
+            congratsModal.style.display = "block";
+            
+            // 2. Falar Parabéns
+            speak("Parabéns, " + childName + "! Você encontrou!", function() {
+                // 3. Esperar 2 segundos e mostrar a curiosidade
+                setTimeout(() => {
+                    congratsModal.style.display = "none";
+                    const phrase = "Você sabia que " + factObj.text;
+                    showVisualContent(factObj, "ALVO LOCALIZADO!", t.color);
+                    speak(phrase, function() {
+                        setTimeout(() => { lockGame = false; nextChallenge(); }, 1000); 
+                    });
+                }, 2000);
             });
         }
 
@@ -678,7 +634,7 @@
             } return [h * 360, s * 100, l * 100];
         }
 
-	function speak(text, callback) {
+        function speak(text, callback) {
             bubbleText.innerText = text; bubbleText.style.opacity = "1"; 
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
