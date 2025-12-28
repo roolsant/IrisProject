@@ -369,7 +369,7 @@
     </div>
 
     <script>
-        /* --- LÓGICA V1.8 - AJUSTE TEXTO JORNADA --- */
+        /* --- LÓGICA V1.9 (Warm-up de áudio) --- */
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -441,7 +441,7 @@
                 alert("Por favor, digite seu nome!");
                 return;
             }
-            loadVoices();
+            // Remove o loadVoices daqui para não atrasar
             safetyModal.style.display = "flex";
             const aviso = "Atenção! Brinque sempre em um local seguro e fechado. Esteja sempre acompanhado de um adulto. Não corra para não se machucar. E brinque em um local bem iluminado para eu ver as cores!";
             speak(aviso);
@@ -522,11 +522,9 @@
             speak("Encontre algo " + currentTarget + "!"); 
         }
 
-        // --- FUNÇÃO AJUSTADA (V1.8) ---
         function finishJourney() {
             lockGame = true;
             endJourneyModal.style.display = "flex";
-            // TEXTO ATUALIZADO AQUI:
             speak("Parabéns, " + childName + "! Você encontrou todas as cores da jornada! Quer começar uma nova jornada?");
         }
 
